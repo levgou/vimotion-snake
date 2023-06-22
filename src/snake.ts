@@ -1,4 +1,4 @@
-import { Direction, Motion, Point, SENTENCE } from './consts'
+import { Direction, Motion, Point, randomSentence, SENTENCE } from './consts'
 
 const CANVAS_SIZE = 600
 const CANVAS_PLAY_OFFSET = 100
@@ -22,6 +22,11 @@ let FOOD = {
 }
 let FOOD_X: number[] = []
 let FOOD_Y: number[] = []
+
+export let sentences = Array(ROW_COUNT).fill(0).map(randomSentence)
+const changeSentences = () => {
+  sentences = Array(ROW_COUNT).fill(0).map(randomSentence)
+}
 
 export const setupCanvas = (
   onInputChanged: (head: Point, c: string) => Motion | null
@@ -238,6 +243,7 @@ const checkCollision = (x1: number, y1: number, x2: number, y2: number) => {
 
 const drawWords = (ctx: CanvasRenderingContext2D) => {
   const head = SNAKE[0]
+  const sentence = sentences[COORD(head.y)]
 
   ctx.font = '12px verdana'
   ctx.fillStyle = 'black'
@@ -246,7 +252,7 @@ const drawWords = (ctx: CanvasRenderingContext2D) => {
   const yOffset = OFS(head.y) + CELL_SIZE / 1.6
 
   for (let i = 0; i < ROW_COUNT; i++) {
-    const char = SENTENCE[i]
+    const char = sentence[i]
     ctx.fillText(char, xOffset + i * CELL_SIZE, yOffset)
   }
 }
@@ -320,6 +326,7 @@ function game(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     SNAKE[SNAKE.length] = { x: head.x, y: head.y }
     createFood()
     drawFood(ctx)
+    changeSentences()
     // pick.play();
     // score += 10;
   }

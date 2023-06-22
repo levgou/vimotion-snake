@@ -2,7 +2,7 @@ import type { Component } from 'solid-js'
 
 import styles from './App.module.css'
 import { createSignal, onMount } from 'solid-js'
-import { newGame } from './snake'
+import { newGame, sentences } from './snake'
 import {
   Board,
   HJKL,
@@ -11,7 +11,7 @@ import {
   LINE_SEARCH,
   Motion,
   Point,
-  SENTENCE,
+  randomSentence,
 } from './consts'
 import { generateMotion } from './motion'
 import { Legend } from './Legend'
@@ -40,7 +40,7 @@ const App: Component = () => {
     const motion = generateMotion(
       board,
       head,
-      SENTENCE,
+      sentences[head.y],
       lastMotion,
       userInput()
     )

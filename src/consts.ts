@@ -36,3 +36,12 @@ export interface Board {
 }
 
 export const SENTENCE = 'Fyodor is do,med to hell.'
+import sentences from './assets/25_sentences.json'
+
+export const SENTENCES = sentences
+export const SENTENCE_COUNT = sentences.length
+
+export const randomSentence = () => {
+  const index = Math.floor(Math.random() * SENTENCE_COUNT)
+  return SENTENCES[index]
+}
