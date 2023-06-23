@@ -1,4 +1,20 @@
-import { Direction, Motion, Point, randomSentence, SENTENCE } from './consts'
+import {
+  Direction,
+  Motion,
+  Point,
+  randomSentence,
+  SENTENCE,
+  SNAKE_BODY_IMAGES,
+  SNAKE_HEAD_BOTTOM,
+  SNAKE_HEAD_LEFT,
+  SNAKE_HEAD_RIGHT,
+  SNAKE_HEAD_TOP,
+  SNAKE_TAIL_BOTTOM,
+  SNAKE_TAIL_LEFT,
+  SNAKE_TAIL_RIGHT,
+  SNAKE_TAIL_TOP,
+} from './consts'
+import { randomInArray } from './misc'
 
 const CANVAS_SIZE = 600
 const CANVAS_PLAY_OFFSET = 100
@@ -193,9 +209,41 @@ function createSnake() {
   }
 }
 
+const headImage = (head: Point, before: Point) => {
+  if (head.x > before.x) {
+    return SNAKE_HEAD_RIGHT
+  } else if (head.x < before.x) {
+    return SNAKE_HEAD_LEFT
+  } else if (head.y < before.y) {
+    return SNAKE_HEAD_TOP
+  } else {
+    return SNAKE_HEAD_BOTTOM
+  }
+}
+
+const tailImage = (tail: Point, after: Point) => {
+  if (tail.x > after.x) {
+    return SNAKE_TAIL_RIGHT
+  } else if (tail.x < after.x) {
+    return SNAKE_TAIL_LEFT
+  } else if (tail.y < after.y) {
+    return SNAKE_TAIL_TOP
+  } else {
+    return SNAKE_TAIL_BOTTOM
+  }
+}
+
 function drawSnake(ctx: CanvasRenderingContext2D) {
   for (let i = 0; i < SNAKE.length; i++) {
-    drawSquare(ctx, SNAKE[i].x, SNAKE[i].y, SNAKE_COLOR)
+    let img: HTMLImageElement
+    if (i === 0) {
+      img = headImage(SNAKE[i], SNAKE[i + 1])
+    } else if (i === SNAKE.length - 1) {
+      img = tailImage(SNAKE[i], SNAKE[i - 1])
+    } else {
+      img = SNAKE_BODY_IMAGES[i % SNAKE_BODY_IMAGES.length]
+    }
+    ctx.drawImage(img, OFS(SNAKE[i].x), OFS(SNAKE[i].y))
   }
 }
 

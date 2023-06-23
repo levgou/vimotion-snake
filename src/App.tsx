@@ -12,6 +12,7 @@ import {
   Motion,
   Point,
   randomSentence,
+  SNAKE_BODY_IMAGES,
 } from './consts'
 import { generateMotion } from './motion'
 import { Legend } from './Legend'

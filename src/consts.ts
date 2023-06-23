@@ -45,3 +45,48 @@ export const randomSentence = () => {
   const index = Math.floor(Math.random() * SENTENCE_COUNT)
   return SENTENCES[index]
 }
+
+import SNAKE_BODY_1 from './assets/snake_body_20_20_1.png'
+import SNAKE_BODY_2 from './assets/snake_body_20_20_2.png'
+import SNAKE_BODY_3 from './assets/snake_body_20_20_3.png'
+import SNAKE_BODY_4 from './assets/snake_body_20_20_4.png'
+
+import SHL from './assets/snake_body_20_20_head_left.png'
+import SHR from './assets/snake_body_20_20_head_right.png'
+import SHT from './assets/snake_body_20_20_head_top.png'
+import SHB from './assets/snake_body_20_20_head_bottom.png'
+
+export const SNAKE_HEAD_LEFT = new Image()
+SNAKE_HEAD_LEFT.src = SHL
+export const SNAKE_HEAD_RIGHT = new Image()
+SNAKE_HEAD_RIGHT.src = SHR
+export const SNAKE_HEAD_TOP = new Image()
+SNAKE_HEAD_TOP.src = SHT
+export const SNAKE_HEAD_BOTTOM = new Image()
+SNAKE_HEAD_BOTTOM.src = SHB
+
+import STT from './assets/snake_body_20_20_tail_top.png'
+import STB from './assets/snake_body_20_20_tail_bottom.png'
+import STL from './assets/snake_body_20_20_tail_left.png'
+import STR from './assets/snake_body_20_20_tail_right.png'
+
+export const SNAKE_TAIL_TOP = new Image()
+SNAKE_TAIL_TOP.src = STT
+export const SNAKE_TAIL_BOTTOM = new Image()
+SNAKE_TAIL_BOTTOM.src = STB
+export const SNAKE_TAIL_LEFT = new Image()
+SNAKE_TAIL_LEFT.src = STL
+export const SNAKE_TAIL_RIGHT = new Image()
+SNAKE_TAIL_RIGHT.src = STR
+
+export const SNAKE_BODY_IMAGES: HTMLImageElement[] = [
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image(),
+]
+
+SNAKE_BODY_IMAGES[0].src = SNAKE_BODY_1
+SNAKE_BODY_IMAGES[1].src = SNAKE_BODY_2
+SNAKE_BODY_IMAGES[2].src = SNAKE_BODY_3
+SNAKE_BODY_IMAGES[3].src = SNAKE_BODY_4
