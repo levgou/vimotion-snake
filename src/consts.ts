@@ -90,3 +90,19 @@ SNAKE_BODY_IMAGES[0].src = SNAKE_BODY_1
 SNAKE_BODY_IMAGES[1].src = SNAKE_BODY_2
 SNAKE_BODY_IMAGES[2].src = SNAKE_BODY_3
 SNAKE_BODY_IMAGES[3].src = SNAKE_BODY_4
+
+import apple from './assets/apple.png'
+export const APPLE = new Image()
+APPLE.src = apple
+
+import cherry from './assets/cherry.png'
+export const CHERRY = new Image()
+CHERRY.src = cherry
+
+import strawberry from './assets/strawberry.png'
+export const STRAWBERRY = new Image()
+STRAWBERRY.src = strawberry
+
+import watermelon from './assets/watermelon.png'
+export const WATERMELON = new Image()
+WATERMELON.src = watermelon

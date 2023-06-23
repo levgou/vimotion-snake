@@ -1,4 +1,6 @@
 import {
+  APPLE,
+  CHERRY,
   Direction,
   Motion,
   Point,
@@ -13,6 +15,8 @@ import {
   SNAKE_TAIL_LEFT,
   SNAKE_TAIL_RIGHT,
   SNAKE_TAIL_TOP,
+  STRAWBERRY,
+  WATERMELON,
 } from './consts'
 import { randomInArray } from './misc'
 
@@ -36,12 +40,18 @@ let FOOD = {
   x: 0,
   y: 0,
 }
+let lastTail = { x: 0, y: 0 }
 let FOOD_X: number[] = []
 let FOOD_Y: number[] = []
 
 export let sentences = Array(ROW_COUNT).fill(0).map(randomSentence)
 const changeSentences = () => {
   sentences = Array(ROW_COUNT).fill(0).map(randomSentence)
+}
+
+let fruit = APPLE
+const changeFruit = () => {
+  fruit = randomInArray([APPLE, CHERRY, WATERMELON, STRAWBERRY])
 }
 
 export const setupCanvas = (
@@ -112,6 +122,8 @@ function createFood() {
       createFood()
     }
   }
+
+  changeFruit()
 }
 
 const drawArrows = (ctx: CanvasRenderingContext2D) => {
@@ -164,7 +176,11 @@ const drawHorizontalArrow = (
 }
 
 function drawFood(ctx: CanvasRenderingContext2D) {
-  drawSquare(ctx, FOOD.x, FOOD.y, FOOD_COLOR)
+  if (FOOD.y === SNAKE[0].y) {
+    ctx.globalAlpha = 0.4
+  }
+  ctx.drawImage(fruit, OFS(FOOD.x), OFS(FOOD.y))
+  ctx.globalAlpha = 1
 }
 
 const clearNonGameArea = (
@@ -236,15 +252,18 @@ const tailImage = (tail: Point, after: Point) => {
 function drawSnake(ctx: CanvasRenderingContext2D) {
   for (let i = 0; i < SNAKE.length; i++) {
     let img: HTMLImageElement
-    if (i === 0) {
-      img = headImage(SNAKE[i], SNAKE[i + 1])
-    } else if (i === SNAKE.length - 1) {
-      img = tailImage(SNAKE[i], SNAKE[i - 1])
-    } else {
+    if (i > 0 && i < SNAKE.length - 1) {
       img = SNAKE_BODY_IMAGES[i % SNAKE_BODY_IMAGES.length]
+      ctx.drawImage(img, OFS(SNAKE[i].x), OFS(SNAKE[i].y))
     }
-    ctx.drawImage(img, OFS(SNAKE[i].x), OFS(SNAKE[i].y))
   }
+  ctx.drawImage(
+    tailImage(SNAKE[SNAKE.length - 1], SNAKE[SNAKE.length - 2]),
+    OFS(SNAKE[SNAKE.length - 1].x),
+    OFS(SNAKE[SNAKE.length - 1].y)
+  )
+
+  ctx.drawImage(headImage(SNAKE[0], SNAKE[1]), OFS(SNAKE[0].x), OFS(SNAKE[0].y))
 }
 
 const moveSnake = (motion: Motion) => {
@@ -269,9 +288,11 @@ const moveSnake = (motion: Motion) => {
   }
 
   let tail = SNAKE.pop()
+
   if (!tail) {
     throw new Error('Snake tail not found')
   }
+  lastTail = { ...tail }
 
   tail.x = x
   tail.y = y
@@ -293,7 +314,7 @@ const drawWords = (ctx: CanvasRenderingContext2D) => {
   const head = SNAKE[0]
   const sentence = sentences[COORD(head.y)]
 
-  ctx.font = '12px verdana'
+  ctx.font = '14px verdana'
   ctx.fillStyle = 'black'
 
   const xOffset = OFS(0) + CELL_SIZE / 3
@@ -371,7 +392,7 @@ function game(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
 
   // checking for collision with FOOD
   if (checkCollision(head.x, head.y, FOOD.x, FOOD.y)) {
-    SNAKE[SNAKE.length] = { x: head.x, y: head.y }
+    SNAKE[SNAKE.length] = { x: lastTail.x, y: lastTail.y }
     createFood()
     drawFood(ctx)
     changeSentences()
