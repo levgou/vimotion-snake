@@ -1,11 +1,13 @@
 import {
-  APPLE,
-  CHERRY,
-  Direction,
+  CANVAS_SIZE,
+  CELL_SIZE,
+  COORD,
+  FOOD_SOUND,
+  FPS,
   Motion,
+  OFS,
   Point,
-  randomSentence,
-  SENTENCE,
+  ROW_COUNT,
   SNAKE_BODY_IMAGES,
   SNAKE_HEAD_BOTTOM,
   SNAKE_HEAD_LEFT,
@@ -15,222 +17,277 @@ import {
   SNAKE_TAIL_LEFT,
   SNAKE_TAIL_RIGHT,
   SNAKE_TAIL_TOP,
-  STRAWBERRY,
-  WATERMELON,
 } from './consts'
-import { randomInArray } from './misc'
+import { checkCollision } from './misc'
+import { SnakeState } from './SnakeState'
 
-const CANVAS_SIZE = 600
-const CANVAS_PLAY_OFFSET = 100
-const CANVAS_PLAY_SIZE = CANVAS_SIZE - CANVAS_PLAY_OFFSET
+export class SnakeCanvas {
+  readonly onInputChanged: (c: string) => void
+  canvas: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D
+  state: SnakeState
 
-const CELL_SIZE = 20
-const ROW_COUNT = (CANVAS_SIZE - CANVAS_PLAY_OFFSET) / CELL_SIZE
-const SNAKE_COLOR = '#3498db'
-const FOOD_COLOR = '#ff3636'
-const FPS = 25
-const SNAKE_LENGTH = 5
+  constructor(state: SnakeState, onInputChanged: (c: string) => void) {
+    this.onInputChanged = onInputChanged
+    this.state = state
 
-const OFS = (n: number) => n + CANVAS_PLAY_OFFSET
-const COORD = (n: number) => n / CELL_SIZE
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement
+    if (!canvas) {
+      throw new Error('Canvas not found')
+    }
+    this.canvas = canvas
 
-// todo: these should be in a state
-let SNAKE: { x: number; y: number }[] = []
-let FOOD = {
-  x: 0,
-  y: 0,
-}
-let lastTail = { x: 0, y: 0 }
-let FOOD_X: number[] = []
-let FOOD_Y: number[] = []
-
-export let sentences = Array(ROW_COUNT).fill(0).map(randomSentence)
-const changeSentences = () => {
-  sentences = Array(ROW_COUNT).fill(0).map(randomSentence)
-}
-
-let fruit = APPLE
-const changeFruit = () => {
-  fruit = randomInArray([APPLE, CHERRY, WATERMELON, STRAWBERRY])
-}
-
-export const setupCanvas = (
-  onInputChanged: (head: Point, c: string) => Motion | null
-) => {
-  const canvas = document.getElementById('canvas') as HTMLCanvasElement
-  if (!canvas) {
-    throw new Error('Canvas not found')
+    const ctx = canvas.getContext('2d')
+    if (!ctx) {
+      throw new Error('Canvas context not found')
+    }
+    this.ctx = ctx
   }
 
-  const ctx = canvas.getContext('2d')
-  if (!ctx) {
-    throw new Error('Canvas context not found')
+  onKeyDown = (evt: KeyboardEvent) => {
+    this.onInputChanged(evt.key)
   }
 
-  // const scoreIs = document.getElementById('score')
-  // const direction = ''
-  // const directionQueue = ''
-  // const score = 0
-  // const hit = new Audio('hit.wav');
-  // const pick = new Audio('pick.wav');
+  setupCanvas = () => {
+    // makes canvas interactive upon load
+    this.canvas.setAttribute('tabindex', '1')
+    this.canvas.style.outline = 'none'
+    this.canvas.focus()
 
-  // pushes possible x and y positions to separate arrays
-  for (let i = OFS(0); i <= CANVAS_PLAY_SIZE - CELL_SIZE; i += CELL_SIZE) {
-    FOOD_X.push(i)
-    FOOD_Y.push(i)
+    this.canvas.onkeydown = this.onKeyDown
   }
 
-  // makes canvas interactive upon load
-  canvas.setAttribute('tabindex', '1')
-  canvas.style.outline = 'none'
-  canvas.focus()
+  newGame = () => {
+    this.setupCanvas()
+    this.ctx.beginPath()
+    this.state.newGame()
 
-  canvas.onkeydown = (evt) => {
-    const motion = onInputChanged(
-      { x: COORD(SNAKE[0].x), y: COORD(SNAKE[0].y) },
-      evt.key
-    )
-    if (motion) {
-      moveSnake(motion)
+    setInterval(() => this.game(), FPS)
+  }
+
+  drawSquare = (row: number, col: number, color: string) => {
+    this.ctx.fillStyle = color
+    this.ctx.fillRect(OFS(COORD(row)), OFS(COORD(col)), CELL_SIZE, CELL_SIZE)
+  }
+
+  drawArrows = () => {
+    const snakeHead = this.state.head
+    const food = this.state.food
+    const snakeFillStyle = 'rgba(98,134,217,0.5)'
+    this.drawHorizontalArrow(snakeHead.row, snakeFillStyle)
+    this.drawVerticalArrow(snakeHead.col, snakeFillStyle)
+
+    const foodFillStyle = 'rgba(217,98,136,0.5)'
+    this.drawHorizontalArrow(food.row, foodFillStyle)
+    this.drawVerticalArrow(food.col, foodFillStyle)
+  }
+
+  drawVerticalArrow = (col: number, fillStyle: string) => {
+    const ctx = this.ctx
+    const yOffset = OFS(0) - CELL_SIZE * 2
+    ctx.fillStyle = fillStyle
+    const colCoord = OFS(COORD(col))
+
+    ctx.fillRect(colCoord, yOffset, CELL_SIZE, CELL_SIZE)
+
+    ctx.beginPath()
+    ctx.moveTo(colCoord, yOffset + CELL_SIZE)
+    ctx.lineTo(colCoord + CELL_SIZE / 2, yOffset + CELL_SIZE + CELL_SIZE)
+    ctx.lineTo(colCoord + CELL_SIZE, yOffset + CELL_SIZE)
+    ctx.lineTo(colCoord, yOffset + CELL_SIZE)
+    ctx.fill()
+    ctx.closePath()
+  }
+
+  drawHorizontalArrow = (row: number, fillStyle: string) => {
+    const ctx = this.ctx
+    const xOffset = OFS(0) - CELL_SIZE * 2
+    ctx.fillStyle = fillStyle
+
+    const rowCoord = OFS(COORD(row))
+
+    ctx.fillRect(xOffset, rowCoord, CELL_SIZE, CELL_SIZE)
+
+    ctx.beginPath()
+    ctx.moveTo(xOffset + CELL_SIZE, rowCoord)
+    ctx.lineTo(xOffset + CELL_SIZE + CELL_SIZE, CELL_SIZE / 2 + rowCoord)
+    ctx.lineTo(xOffset + CELL_SIZE, CELL_SIZE + rowCoord)
+    ctx.lineTo(xOffset + CELL_SIZE, rowCoord)
+    ctx.fill()
+    ctx.closePath()
+  }
+
+  drawFood = () => {
+    const food = this.state.food
+    const head = this.state.head
+
+    if (food.row === head.row) {
+      this.ctx.globalAlpha = 0.4
+    }
+    this.drawImage(this.state.fruit, food.col, food.row)
+    this.ctx.globalAlpha = 1
+  }
+
+  clearNonGameArea = (color1: string, color2: string) => {
+    this.ctx.fillStyle = color1
+    this.ctx.strokeStyle = color2
+    this.ctx.fillRect(0, 0, OFS(0), CANVAS_SIZE)
+    this.ctx.fillRect(0, 0, CANVAS_SIZE, OFS(0))
+  }
+
+  setBackground = (color1: string, color2: string) => {
+    const [ctx, canvas] = [this.ctx, this.canvas]
+    ctx.fillStyle = color1
+    ctx.strokeStyle = color2
+
+    ctx.fillRect(OFS(0), OFS(0), canvas.height, canvas.width)
+
+    for (let x = 0.5; x < canvas.width; x += CELL_SIZE) {
+      ctx.moveTo(OFS(x), OFS(0))
+      ctx.lineTo(OFS(x), CANVAS_SIZE)
+    }
+    for (let y = 0.5; y < canvas.height; y += CELL_SIZE) {
+      ctx.moveTo(OFS(0), OFS(y))
+      ctx.lineTo(CANVAS_SIZE, OFS(y))
+    }
+
+    ctx.stroke()
+  }
+
+  drawImage = (img: HTMLImageElement, row: number, col: number) => {
+    this.ctx.drawImage(img, OFS(COORD(row)), OFS(COORD(col)))
+  }
+
+  drawSnake = () => {
+    const snake = this.state.snake
+
+    for (let i = 0; i < this.state.snakeSize; i++) {
+      let img: HTMLImageElement
+      if (i > 0 && i < this.state.snakeSize - 1) {
+        img = SNAKE_BODY_IMAGES[i % SNAKE_BODY_IMAGES.length]
+        this.drawImage(img, snake[i].col, snake[i].row)
+      }
+    }
+
+    const tail = this.state.tail
+    const almostLast = snake[snake.length - 2]
+    this.drawImage(tailImage(tail, almostLast), tail.col, tail.row)
+
+    const head = this.state.head
+    const second = snake[1]
+    this.drawImage(headImage(head, second), head.col, head.row)
+  }
+
+  game = () => {
+    const head = this.state.head
+    const food = this.state.food
+    // checking for wall collisions
+    // if (head.x < 0 || head.x > canvas.width - CELL_SIZE || head.y < 0 || head.y > canvas.height - CELL_SIZE) {
+    //     hit.play();
+    //     setBackground();
+    //     createSnake();
+    //     drawSnake();
+    //     createFood();
+    //     drawFood();
+    //     directionQueue = 'right';
+    //     score = 0;
+    // }
+
+    // checking for colisions with SNAKE's body
+    // for (i = 1; i < SNAKE.length; i++) {
+    //     if (head.x == SNAKE[i].x && head.y == SNAKE[i].y) {
+    //         hit.play(); // playing sounds
+    //         setBackground();
+    //         createSnake();
+    //         drawSnake();
+    //         createFood();
+    //         drawFood();
+    //         directionQueue = 'right';
+    //         score = 0;
+    //     }
+    // }
+
+    // checking for collision with FOOD
+    if (checkCollision(head.col, head.row, food.col, food.row)) {
+      this.state.appendLastTail()
+      this.state.createFood()
+      this.drawFood()
+      this.state.changeSentences()
+      FOOD_SOUND.play()
+      // score += 10;
+    }
+
+    this.ctx.beginPath()
+    this.setBackground('#fff', '#eee')
+    this.drawSnake()
+    this.drawFood()
+    this.clearNonGameArea('#fff', '#eee')
+    this.drawArrows()
+    this.drawNumbers()
+    this.drawWords()
+  }
+
+  drawWords = () => {
+    const ctx = this.ctx
+    const head = this.state.head
+    const sentence = this.state.sentences[head.row]
+
+    ctx.font = '14px verdana'
+    ctx.fillStyle = 'black'
+
+    const xOffset = OFS(0) + CELL_SIZE / 3
+    const yOffset = OFS(COORD(head.row)) + CELL_SIZE / 1.6
+
+    for (let i = 0; i < ROW_COUNT; i++) {
+      const char = sentence[i]
+      ctx.fillText(char, xOffset + i * CELL_SIZE, yOffset)
     }
   }
 
-  const board = {
-    width: COORD(CANVAS_PLAY_SIZE),
-    height: COORD(CANVAS_PLAY_SIZE),
-  }
+  drawNumbers = () => {
+    const ctx = this.ctx
+    const head = this.state.head
 
-  return { canvas, ctx, board }
-}
+    ctx.font = '10px verdana'
+    ctx.fillStyle = 'black'
+    const xOffset = OFS(0) - CELL_SIZE * 1.8
+    const yOffset = OFS(0) + CELL_SIZE / 2
 
-const drawSquare = (
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  color: string
-) => {
-  ctx.fillStyle = color
-  ctx.fillRect(OFS(x), OFS(y), CELL_SIZE, CELL_SIZE)
-}
-
-function createFood() {
-  FOOD.x = FOOD_X[Math.floor(Math.random() * FOOD_X.length)]
-  FOOD.y = FOOD_Y[Math.floor(Math.random() * FOOD_Y.length)]
-
-  for (let i = 0; i < SNAKE.length; i++) {
-    if (checkCollision(FOOD.x, FOOD.y, SNAKE[i].x, SNAKE[i].y)) {
-      createFood()
+    for (let i = 0; i < ROW_COUNT; i++) {
+      let idx = 0
+      if (i < head.row) {
+        idx = head.row - i
+      } else if (i === head.row) {
+        idx = head.row
+      } else {
+        idx = i - head.row
+      }
+      ctx.fillText(`${idx}`, xOffset, yOffset + i * CELL_SIZE)
     }
-  }
 
-  changeFruit()
-}
+    const horizXOffset = OFS(0) + CELL_SIZE / 5
+    const horizYOffset = OFS(0) - CELL_SIZE * 1.3
 
-const drawArrows = (ctx: CanvasRenderingContext2D) => {
-  const snakeHead = SNAKE[0]
-  const snakeFillStyle = 'rgba(98,134,217,0.5)'
-  drawHorizontalArrow(ctx, OFS(snakeHead.y), snakeFillStyle)
-  drawVerticalArrow(ctx, OFS(snakeHead.x), snakeFillStyle)
-
-  const foodFillStyle = 'rgba(217,98,136,0.5)'
-  drawHorizontalArrow(ctx, OFS(FOOD.y), foodFillStyle)
-  drawVerticalArrow(ctx, OFS(FOOD.x), foodFillStyle)
-}
-
-const drawVerticalArrow = (
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  fillStyle: string
-) => {
-  const yOffset = OFS(0) - CELL_SIZE * 2
-  ctx.fillStyle = fillStyle
-
-  ctx.fillRect(x, yOffset, CELL_SIZE, CELL_SIZE)
-
-  ctx.beginPath()
-  ctx.moveTo(x, yOffset + CELL_SIZE)
-  ctx.lineTo(x + CELL_SIZE / 2, yOffset + CELL_SIZE + CELL_SIZE)
-  ctx.lineTo(x + CELL_SIZE, yOffset + CELL_SIZE)
-  ctx.lineTo(x, yOffset + CELL_SIZE)
-  ctx.fill()
-  ctx.closePath()
-}
-
-const drawHorizontalArrow = (
-  ctx: CanvasRenderingContext2D,
-  y: number,
-  fillStyle: string
-) => {
-  const xOffset = OFS(0) - CELL_SIZE * 2
-  ctx.fillStyle = fillStyle
-
-  ctx.fillRect(xOffset, y, CELL_SIZE, CELL_SIZE)
-
-  ctx.beginPath()
-  ctx.moveTo(xOffset + CELL_SIZE, y)
-  ctx.lineTo(xOffset + CELL_SIZE + CELL_SIZE, CELL_SIZE / 2 + y)
-  ctx.lineTo(xOffset + CELL_SIZE, CELL_SIZE + y)
-  ctx.lineTo(xOffset + CELL_SIZE, y)
-  ctx.fill()
-  ctx.closePath()
-}
-
-function drawFood(ctx: CanvasRenderingContext2D) {
-  if (FOOD.y === SNAKE[0].y) {
-    ctx.globalAlpha = 0.4
-  }
-  ctx.drawImage(fruit, OFS(FOOD.x), OFS(FOOD.y))
-  ctx.globalAlpha = 1
-}
-
-const clearNonGameArea = (
-  ctx: CanvasRenderingContext2D,
-  color1: string,
-  color2: string
-) => {
-  ctx.fillStyle = color1
-  ctx.strokeStyle = color2
-  ctx.fillRect(0, 0, OFS(0), CANVAS_SIZE)
-  ctx.fillRect(0, 0, CANVAS_SIZE, OFS(0))
-}
-
-const setBackground = (
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D,
-  color1: string,
-  color2: string
-) => {
-  ctx.fillStyle = color1
-  ctx.strokeStyle = color2
-
-  ctx.fillRect(OFS(0), OFS(0), canvas.height, canvas.width)
-
-  for (let x = 0.5; x < canvas.width; x += CELL_SIZE) {
-    ctx.moveTo(OFS(x), OFS(0))
-    ctx.lineTo(OFS(x), CANVAS_SIZE)
-  }
-  for (let y = 0.5; y < canvas.height; y += CELL_SIZE) {
-    ctx.moveTo(OFS(0), OFS(y))
-    ctx.lineTo(CANVAS_SIZE, OFS(y))
-  }
-
-  ctx.stroke()
-}
-
-function createSnake() {
-  SNAKE = []
-  for (let i = SNAKE_LENGTH; i > 0; i--) {
-    const k = i * CELL_SIZE
-    SNAKE.push({ x: k, y: 0 })
+    for (let i = 0; i < ROW_COUNT; i++) {
+      let idx = 0
+      if (i < head.col) {
+        idx = head.col - i
+      } else if (i === head.col) {
+        idx = head.col
+      } else {
+        idx = i - head.col
+      }
+      ctx.fillText(`${idx}`, horizXOffset + i * CELL_SIZE, horizYOffset)
+    }
   }
 }
 
 const headImage = (head: Point, before: Point) => {
-  if (head.x > before.x) {
+  if (head.col > before.col) {
     return SNAKE_HEAD_RIGHT
-  } else if (head.x < before.x) {
+  } else if (head.col < before.col) {
     return SNAKE_HEAD_LEFT
-  } else if (head.y < before.y) {
+  } else if (head.row < before.row) {
     return SNAKE_HEAD_TOP
   } else {
     return SNAKE_HEAD_BOTTOM
@@ -238,187 +295,13 @@ const headImage = (head: Point, before: Point) => {
 }
 
 const tailImage = (tail: Point, after: Point) => {
-  if (tail.x > after.x) {
+  if (tail.col > after.col) {
     return SNAKE_TAIL_RIGHT
-  } else if (tail.x < after.x) {
+  } else if (tail.col < after.col) {
     return SNAKE_TAIL_LEFT
-  } else if (tail.y < after.y) {
+  } else if (tail.row < after.row) {
     return SNAKE_TAIL_TOP
   } else {
     return SNAKE_TAIL_BOTTOM
   }
-}
-
-function drawSnake(ctx: CanvasRenderingContext2D) {
-  for (let i = 0; i < SNAKE.length; i++) {
-    let img: HTMLImageElement
-    if (i > 0 && i < SNAKE.length - 1) {
-      img = SNAKE_BODY_IMAGES[i % SNAKE_BODY_IMAGES.length]
-      ctx.drawImage(img, OFS(SNAKE[i].x), OFS(SNAKE[i].y))
-    }
-  }
-  ctx.drawImage(
-    tailImage(SNAKE[SNAKE.length - 1], SNAKE[SNAKE.length - 2]),
-    OFS(SNAKE[SNAKE.length - 1].x),
-    OFS(SNAKE[SNAKE.length - 1].y)
-  )
-
-  ctx.drawImage(headImage(SNAKE[0], SNAKE[1]), OFS(SNAKE[0].x), OFS(SNAKE[0].y))
-}
-
-const moveSnake = (motion: Motion) => {
-  const { direction, count } = motion
-
-  if (motion.count === 0) {
-    return
-  }
-
-  let x = SNAKE[0].x
-  let y = SNAKE[0].y
-  const movement = CELL_SIZE
-
-  if (direction === Direction.Right) {
-    x += movement
-  } else if (direction === Direction.Left) {
-    x -= movement
-  } else if (direction === Direction.Up) {
-    y -= movement
-  } else if (direction === Direction.Down) {
-    y += movement
-  }
-
-  let tail = SNAKE.pop()
-
-  if (!tail) {
-    throw new Error('Snake tail not found')
-  }
-  lastTail = { ...tail }
-
-  tail.x = x
-  tail.y = y
-  SNAKE.unshift(tail)
-
-  if (count > 1) {
-    moveSnake({
-      ...motion,
-      count: count - 1,
-    })
-  }
-}
-
-const checkCollision = (x1: number, y1: number, x2: number, y2: number) => {
-  return x1 == x2 && y1 == y2
-}
-
-const drawWords = (ctx: CanvasRenderingContext2D) => {
-  const head = SNAKE[0]
-  const sentence = sentences[COORD(head.y)]
-
-  ctx.font = '14px verdana'
-  ctx.fillStyle = 'black'
-
-  const xOffset = OFS(0) + CELL_SIZE / 3
-  const yOffset = OFS(head.y) + CELL_SIZE / 1.6
-
-  for (let i = 0; i < ROW_COUNT; i++) {
-    const char = sentence[i]
-    ctx.fillText(char, xOffset + i * CELL_SIZE, yOffset)
-  }
-}
-
-const drawNumbers = (ctx: CanvasRenderingContext2D) => {
-  const head = SNAKE[0]
-
-  ctx.font = '10px verdana'
-  ctx.fillStyle = 'black'
-  const xOffset = OFS(0) - CELL_SIZE * 1.8
-  const yOffset = OFS(0) + CELL_SIZE / 2
-
-  for (let i = 0; i < ROW_COUNT; i++) {
-    let idx = 0
-    if (i < COORD(head.y)) {
-      idx = COORD(head.y) - i
-    } else if (i === COORD(head.y)) {
-      idx = COORD(head.y)
-    } else {
-      idx = i - COORD(head.y)
-    }
-    ctx.fillText(`${idx}`, xOffset, yOffset + i * CELL_SIZE)
-  }
-
-  const horizXOffset = OFS(0) + CELL_SIZE / 5
-  const horizYOffset = OFS(0) - CELL_SIZE * 1.3
-
-  for (let i = 0; i < ROW_COUNT; i++) {
-    let idx = 0
-    if (i < COORD(head.x)) {
-      idx = COORD(head.x) - i
-    } else if (i === COORD(head.x)) {
-      idx = COORD(head.x)
-    } else {
-      idx = i - COORD(head.x)
-    }
-    ctx.fillText(`${idx}`, horizXOffset + i * CELL_SIZE, horizYOffset)
-  }
-}
-
-function game(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-  let head = SNAKE[0]
-  // checking for wall collisions
-  // if (head.x < 0 || head.x > canvas.width - CELL_SIZE || head.y < 0 || head.y > canvas.height - CELL_SIZE) {
-  //     hit.play();
-  //     setBackground();
-  //     createSnake();
-  //     drawSnake();
-  //     createFood();
-  //     drawFood();
-  //     directionQueue = 'right';
-  //     score = 0;
-  // }
-
-  // checking for colisions with SNAKE's body
-  // for (i = 1; i < SNAKE.length; i++) {
-  //     if (head.x == SNAKE[i].x && head.y == SNAKE[i].y) {
-  //         hit.play(); // playing sounds
-  //         setBackground();
-  //         createSnake();
-  //         drawSnake();
-  //         createFood();
-  //         drawFood();
-  //         directionQueue = 'right';
-  //         score = 0;
-  //     }
-  // }
-
-  // checking for collision with FOOD
-  if (checkCollision(head.x, head.y, FOOD.x, FOOD.y)) {
-    SNAKE[SNAKE.length] = { x: lastTail.x, y: lastTail.y }
-    createFood()
-    drawFood(ctx)
-    changeSentences()
-    // pick.play();
-    // score += 10;
-  }
-
-  ctx.beginPath()
-  setBackground(canvas, ctx, '#fff', '#eee')
-  drawSnake(ctx)
-  drawFood(ctx)
-  clearNonGameArea(ctx, '#fff', '#eee')
-  drawArrows(ctx)
-  drawNumbers(ctx)
-  drawWords(ctx)
-}
-
-export const newGame = (
-  onInputChanged: (head: Point, c: string) => Motion | null
-) => {
-  const { canvas, ctx, board } = setupCanvas(onInputChanged)
-  ctx.beginPath()
-  createSnake()
-  createFood()
-
-  setInterval(() => game(canvas, ctx), FPS)
-
-  return board
 }

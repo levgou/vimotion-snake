@@ -59,9 +59,9 @@ const fFtTMotion = (
 
   let tail = ''
   if (['f', 't'].includes(ft)) {
-    tail = lineSentence.slice(head.x + 1)
+    tail = lineSentence.slice(head.col + 1)
   } else {
-    tail = lineSentence.slice(0, head.x)
+    tail = lineSentence.slice(0, head.col)
   }
   if (!tail.includes(char)) {
     return {
@@ -101,14 +101,14 @@ const screenMotion = (
     return {
       cmd,
       direction: Direction.Up,
-      count: head.y,
+      count: head.row,
       type: MotionType.Other,
     }
   } else {
     return {
       cmd,
       direction: Direction.Down,
-      count: board.height - head.y - 1,
+      count: board.height - head.row - 1,
       type: MotionType.Other,
     }
   }
@@ -124,14 +124,14 @@ const linePositionMotion = (
     return {
       cmd,
       direction: Direction.Right,
-      count: board.width - head.x - 1,
+      count: board.width - head.col - 1,
       type: MotionType.Other,
     }
   } else {
     return {
       cmd,
       direction: Direction.Left,
-      count: head.x + 1,
+      count: head.col + 1,
       type: MotionType.Other,
     }
   }
@@ -210,9 +210,9 @@ const wordMotion = (
 
   let tail = ''
   if (['w', 'e'].includes(cmd.toLowerCase())) {
-    tail = lineSentence.slice(head.x + 1)
+    tail = lineSentence.slice(head.col + 1)
   } else {
-    tail = lineSentence.slice(0, head.x)
+    tail = lineSentence.slice(0, head.col)
   }
   const groups = [...tail.matchAll(wordSep)]
   const allGroups = [...lineSentence.matchAll(wordSep)].map((x) => x[0])

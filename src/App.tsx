@@ -2,31 +2,27 @@ import type { Component } from 'solid-js'
 
 import styles from './App.module.css'
 import { createSignal, onMount } from 'solid-js'
-import { newGame, sentences } from './snake'
-import {
-  Board,
-  HJKL,
-  IGNORE_INPUTS,
-  LINE_CMDS,
-  LINE_SEARCH,
-  Motion,
-  Point,
-  randomSentence,
-  SNAKE_BODY_IMAGES,
-} from './consts'
+import { Board, IGNORE_INPUTS, Motion, ROW_COUNT } from './consts'
 import { generateMotion } from './motion'
 import { Legend } from './Legend'
+import { SnakeState } from './SnakeState'
+import { SnakeCanvas } from './snake'
+import { Score } from './Score'
 
 const App: Component = () => {
   const [userInput, setUserInput] = createSignal('')
+  const state = new SnakeState(ROW_COUNT)
+
   let board: Board = { width: 0, height: 0 }
   let lastMotion: Motion | null = null
+  let canvas: SnakeCanvas
 
   onMount(() => {
-    board = newGame(onInput)
+    canvas = new SnakeCanvas(state, onInput)
+    canvas.newGame()
   })
 
-  const onInput = (head: Point, c: string): Motion | null => {
+  const onInput = (c: string) => {
     if (lastMotion) {
       setUserInput('')
     }
@@ -40,15 +36,17 @@ const App: Component = () => {
 
     const motion = generateMotion(
       board,
-      head,
-      sentences[head.y],
+      state.head,
+      state.headSentence,
       lastMotion,
       userInput()
     )
     if (!motion?.ignoreSave) {
       lastMotion = motion
     }
-    return motion
+    if (motion) {
+      state.moveSnake(motion)
+    }
   }
 
   return (
@@ -57,6 +55,7 @@ const App: Component = () => {
         <div class={styles.cmd}>{userInput()}</div>
         <canvas id="canvas" height="600px" width="600px"></canvas>
       </div>
+      <Score score={100} />
       <Legend />
     </div>
   )

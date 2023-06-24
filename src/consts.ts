@@ -5,6 +5,19 @@ export const SCREEN_CMDS = ['gg', 'G']
 export const LINE_SEARCH = ['f', 'F', 't', 'T']
 export const WORD_MOTIONS = ['w', 'W', 'e', 'E', 'b', 'B']
 
+export const SNAKE_LENGTH = 5
+export const CANVAS_SIZE = 600
+export const CANVAS_PLAY_OFFSET = 100
+export const CANVAS_PLAY_SIZE = CANVAS_SIZE - CANVAS_PLAY_OFFSET
+
+export const CELL_SIZE = 20
+export const ROW_COUNT = (CANVAS_SIZE - CANVAS_PLAY_OFFSET) / CELL_SIZE
+export const FPS = 25
+
+export const OFS = (n: number) => n + CANVAS_PLAY_OFFSET
+export const COORD_OF = (n: number) => n / CELL_SIZE
+export const COORD = (i: number) => i * CELL_SIZE
+
 export enum Direction {
   Up = 'up',
   Down = 'down',
@@ -26,8 +39,8 @@ export interface Motion {
 }
 
 export interface Point {
-  x: number
-  y: number
+  col: number
+  row: number
 }
 
 export interface Board {
@@ -92,17 +105,25 @@ SNAKE_BODY_IMAGES[2].src = SNAKE_BODY_3
 SNAKE_BODY_IMAGES[3].src = SNAKE_BODY_4
 
 import apple from './assets/apple.png'
+
 export const APPLE = new Image()
 APPLE.src = apple
 
 import cherry from './assets/cherry.png'
+
 export const CHERRY = new Image()
 CHERRY.src = cherry
 
 import strawberry from './assets/strawberry.png'
+
 export const STRAWBERRY = new Image()
 STRAWBERRY.src = strawberry
 
 import watermelon from './assets/watermelon.png'
+
 export const WATERMELON = new Image()
 WATERMELON.src = watermelon
+
+import foodSound from './assets/food_sound.wav'
+
+export const FOOD_SOUND = new Audio(foodSound)
