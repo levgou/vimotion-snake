@@ -8,6 +8,7 @@ import { Legend } from './Legend'
 import { SnakeState } from './SnakeState'
 import { SnakeCanvas } from './snake'
 import { Score } from './Score'
+import { GithubLink } from './GithubLink'
 
 // todo: keys to add support for
 // - backspace -
@@ -62,7 +63,10 @@ const App: Component = () => {
         <canvas id="canvas" height="600px" width="600px"></canvas>
       </div>
       <Score score={score()} />
-      <Legend />
+      <div>
+        <Legend />
+        <GithubLink />
+      </div>
     </div>
   )
 }

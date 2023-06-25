@@ -127,3 +127,6 @@ WATERMELON.src = watermelon
 import foodSound from './assets/food_sound.wav'
 
 export const FOOD_SOUND = new Audio(foodSound)
+
+import gh from './assets/github.png'
+export const GITHUB = gh
