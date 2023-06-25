@@ -1,26 +1,33 @@
 import {
   APPLE,
+  Board,
   CHERRY,
   Direction,
+  FOOD_SOUND,
   Motion,
   randomSentence,
   SNAKE_LENGTH,
   STRAWBERRY,
   WATERMELON,
 } from './consts'
-import { checkCollision, randomInArray } from './misc'
+import { checkCollision, manhattanDistance, randomInArray } from './misc'
 
 export class SnakeState {
   readonly rowCount: number
   sentences: string[] = []
   fruit = APPLE
 
+  lastTail = { col: 0, row: 0 }
   snake: { col: number; row: number }[] = []
+
   food = {
     col: 0,
     row: 0,
   }
-  lastTail = { col: 0, row: 0 }
+  foodDistance = 0
+  movesDoneForFood = 0
+
+  score = 0
 
   constructor(rowCount: number) {
     this.rowCount = rowCount
@@ -41,6 +48,13 @@ export class SnakeState {
 
   get headSentence() {
     return this.sentences[this.head.row]
+  }
+
+  get board(): Board {
+    return {
+      width: this.rowCount,
+      height: this.rowCount,
+    }
   }
 
   newGame = () => {
@@ -78,6 +92,13 @@ export class SnakeState {
       }
     }
 
+    this.foodDistance = manhattanDistance(
+      this.head.col,
+      this.head.row,
+      this.food.col,
+      this.food.row
+    )
+    this.movesDoneForFood = 0
     this.changeFruit()
   }
 
@@ -89,6 +110,20 @@ export class SnakeState {
   }
 
   moveSnake = (motion: Motion) => {
+    this.doMoveSnake(motion)
+    this.movesDoneForFood += 1
+    if (
+      checkCollision(this.head.col, this.head.row, this.food.col, this.food.row)
+    ) {
+      this.score += Math.max(1, this.foodDistance - this.movesDoneForFood)
+      this.appendLastTail()
+      this.createFood()
+      this.changeSentences()
+      FOOD_SOUND.play()
+    }
+  }
+
+  doMoveSnake = (motion: Motion) => {
     const { direction, count } = motion
 
     if (motion.count === 0) {
@@ -120,7 +155,7 @@ export class SnakeState {
     this.snake.unshift(tail)
 
     if (count > 1) {
-      this.moveSnake({
+      this.doMoveSnake({
         ...motion,
         count: count - 1,
       })

@@ -9,11 +9,16 @@ import { SnakeState } from './SnakeState'
 import { SnakeCanvas } from './snake'
 import { Score } from './Score'
 
+// todo: keys to add support for
+// - backspace -
+// - u - undo
+// -
+
 const App: Component = () => {
   const [userInput, setUserInput] = createSignal('')
+  const [score, setScore] = createSignal(0)
   const state = new SnakeState(ROW_COUNT)
 
-  let board: Board = { width: 0, height: 0 }
   let lastMotion: Motion | null = null
   let canvas: SnakeCanvas
 
@@ -35,7 +40,7 @@ const App: Component = () => {
     }
 
     const motion = generateMotion(
-      board,
+      state.board,
       state.head,
       state.headSentence,
       lastMotion,
@@ -46,6 +51,7 @@ const App: Component = () => {
     }
     if (motion) {
       state.moveSnake(motion)
+      setScore(state.score)
     }
   }
 
@@ -55,7 +61,7 @@ const App: Component = () => {
         <div class={styles.cmd}>{userInput()}</div>
         <canvas id="canvas" height="600px" width="600px"></canvas>
       </div>
-      <Score score={100} />
+      <Score score={score()} />
       <Legend />
     </div>
   )

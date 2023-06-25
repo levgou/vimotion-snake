@@ -1,41 +1,58 @@
 import styles from './App.module.css'
-import { Component, createEffect, createSignal, For } from 'solid-js'
-import { TransitionGroup } from 'solid-transition-group'
+import { createEffect, createSignal } from 'solid-js'
+import { Transition } from 'solid-transition-group'
 
-export const Score = ({
-  score,
-  scoreIncrease,
-}: {
-  score: number
-  scoreIncrease: number
-}) => {
+export const Score = (props: { score: number }) => {
   const [displayedScore, setDisplayedScore] = createSignal(0)
+  const [show, setShow] = createSignal(false)
+  const [animating, setAnimating] = createSignal(false)
+  let scoreDiff: number = 0
 
   const animateToScore = (score: number) => {
-    requestAnimationFrame(() => {
+    const interval = setInterval(() => {
       if (score !== displayedScore()) {
         setDisplayedScore(displayedScore() + 1)
+      } else {
+        clearInterval(interval)
       }
-    })
+    }, 60)
   }
 
   createEffect(() => {
-    if (score !== displayedScore()) {
-      animateToScore(score)
-    }
-  })
-
-  createEffect(() => {
-    if (scoreIncrease > 0) {
+    if (props.score !== displayedScore() && !animating()) {
+      scoreDiff = props.score - displayedScore()
+      setAnimating(true)
+      animateToScore(props.score)
+      setShow(true)
     }
   })
 
   return (
-    <div style={{ width: '300px' }}>
+    <div class={styles.score}>
       <div class={styles.center}>
         <div class={styles.title}>SCORE:</div>
-        <div class={styles.tag}>+100</div>
         <div class={styles.score}>{displayedScore()}</div>
+        <Transition
+          onEnter={(el, done) => {
+            const a = el.animate(
+              [
+                { transform: 'translate3d(0, 100%, 0)', opacity: 1 },
+                { transform: 'translate3d(0, 0, 0)', opacity: 0 },
+              ],
+              {
+                duration: 1300,
+              }
+            )
+            a.onfinish = () => {
+              setShow(false)
+              setAnimating(false)
+              el.setAttribute('style', 'display: none;')
+              done()
+            }
+          }}
+        >
+          {show() && <div class={styles.tag}>+{scoreDiff}</div>}
+        </Transition>
       </div>
     </div>
   )

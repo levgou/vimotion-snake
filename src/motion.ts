@@ -131,7 +131,7 @@ const linePositionMotion = (
     return {
       cmd,
       direction: Direction.Left,
-      count: head.col + 1,
+      count: head.col,
       type: MotionType.Other,
     }
   }

@@ -208,14 +208,14 @@ export class SnakeCanvas {
     // }
 
     // checking for collision with FOOD
-    if (checkCollision(head.col, head.row, food.col, food.row)) {
-      this.state.appendLastTail()
-      this.state.createFood()
-      this.drawFood()
-      this.state.changeSentences()
-      FOOD_SOUND.play()
-      // score += 10;
-    }
+    // if (checkCollision(head.col, head.row, food.col, food.row)) {
+    //   this.state.appendLastTail()
+    //   this.state.createFood()
+    //   this.drawFood()
+    //   this.state.changeSentences()
+    //   FOOD_SOUND.play()
+    //   // score += 10;
+    // }
 
     this.ctx.beginPath()
     this.setBackground('#fff', '#eee')
