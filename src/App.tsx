@@ -2,7 +2,7 @@ import type { Component } from 'solid-js'
 
 import styles from './App.module.css'
 import { createSignal, onMount } from 'solid-js'
-import { Board, IGNORE_INPUTS, Motion, ROW_COUNT } from './consts'
+import { Board, IGNORE_INPUTS, LOGO, Motion, ROW_COUNT } from './consts'
 import { generateMotion } from './motion'
 import { Legend } from './Legend'
 import { SnakeState } from './SnakeState'
@@ -62,7 +62,10 @@ const App: Component = () => {
         <div class={styles.cmd}>{userInput()}</div>
         <canvas id="canvas" height="600px" width="600px"></canvas>
       </div>
-      <Score score={score()} />
+      <div>
+        <img src={LOGO} alt={'logo'} />
+        <Score score={score()} />
+      </div>
       <div class={styles.rightColumn}>
         <Legend />
         <GithubLink />

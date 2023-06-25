@@ -130,3 +130,6 @@ export const FOOD_SOUND = new Audio(foodSound)
 
 import gh from './assets/github.png'
 export const GITHUB = gh
+
+import logo from './assets/logo.png'
+export const LOGO = logo
