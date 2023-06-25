@@ -4,25 +4,11 @@
     justify-content: space-evenly;
 }
 
-.header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-}
-
 * {
     margin: 0;
     padding: 0;
 }
 
-html {
-    height: 100%;
-}
 
 .score {
     font-family: verdana;
@@ -35,25 +21,26 @@ canvas {
 }
 
 .cmd {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: 'Oswald', sans-serif;
+    color: #555555;
+    font-size: 35px;
+
     margin-left: 100px;
     margin-right: 20px;
     margin-top: 20px;
-    font-size: 20px;
-    color: #6f6f6f;
     background: white;
     min-width: 2.66em;
-    min-height: 2.66em;
-    line-height: 2.42em;
-    padding: 0.2em;
-    text-align: center;
+    min-height: 1.66em;
     border-radius: 0.2em;
     border: solid 1px #d4d4d4;
 }
 
 .legendSection {
-    height: 95vh;
-    flex: 1;
-    /*background-color: #d4d4d4;*/
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,11 +48,30 @@ canvas {
 
 .legend {
     width: 70%;
-    margin-top: -10%;
+    margin-top: 10%;
+
+    border-color: #8bc34aaa;
+    box-shadow: 0px 0px 18px #888888;
+
+
+    border-width: 5px;
+    border-radius: 55px;
+    border-style: solid;
+    padding: 35px;
+
 
     /*background-color: cadetblue;*/
 }
+.legendTitle{
+    margin-top: -10px;
+    color: #333333;
+    text-shadow: 0px 0px 2px #88888833;
+}
+.legendContent{
+    overflow-y:scroll;
+    height: 70vh;
 
+}
 .game-container {
     flex: 1;
     display: flex;
@@ -82,16 +88,15 @@ canvas {
 
 .score {
     font-family: 'Oswald', sans-serif;
-    color: #CCC;
-    text-shadow: 1px 1px 5px black;
+    color: #8bc34a;
+    text-shadow: 1px 1px 6px black;
     font-size: 90px;
     line-height: 90px;
 }
 
 .tag {
     font-family: 'Oswald', sans-serif;
-    color: #CCC;
-    text-shadow: 1px 1px 5px black;
+    color: #00b6ee;
     position: absolute;
     top: -100px;
     left: 50%;
@@ -101,8 +106,8 @@ canvas {
 
 .title {
     font-family: 'Oswald', sans-serif;
-    color: #CCC;
-    text-shadow: 1px 1px 5px black;
+    color: #555555;
+    text-shadow: 1px 1px 2px black;
     font-size: 40px;
     line-height: 70px;
 }
@@ -111,4 +116,48 @@ canvas {
     width: 300px;
     display: flex;
     justify-content: center;
+}
+
+.rightColumn {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+}
+
+.github {
+
+}
+
+.separator {
+    margin-left: -35px;
+    margin-right: -35px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    height: 2px;
+    background-color: #00b6ffcc;
+    box-shadow: 1px 0px 3px #8bc34a88;
+}
+
+.kbd {
+    border: 2px solid black;
+    box-shadow: 2px 2px black;
+    font-size: .85em;
+    line-height: .85em;
+    display: inline-block;
+    font-weight: 600;
+    letter-spacing: .05em;
+    padding: 3px 5px;
+    white-space: nowrap;
+    margin-right: 7px;
+}
+
+td {
+    padding-bottom: 10px;
+    min-width: 50px;
+}
+.legendKeyDesc{
+    font-size: 15px;
+    font-family: 'Verdana', sans-serif;
 }

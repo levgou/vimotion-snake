@@ -63,7 +63,7 @@ const App: Component = () => {
         <canvas id="canvas" height="600px" width="600px"></canvas>
       </div>
       <Score score={score()} />
-      <div>
+      <div class={styles.rightColumn}>
         <Legend />
         <GithubLink />
       </div>
