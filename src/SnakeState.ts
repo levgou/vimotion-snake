@@ -100,7 +100,6 @@ export class SnakeState {
     )
     this.movesDoneForFood = 0
     this.changeFruit()
-    console.log('food', this.food)
   }
 
   createSnake = () => {
