@@ -46,6 +46,19 @@ canvas {
     align-items: center;
 }
 
+.tutorialLegend {
+    width: 25vw;
+    margin-top: 10%;
+
+    border-color: rgba(230, 255, 0, 0.58);
+    box-shadow: 0 0 18px #888888;
+
+    border-width: 5px;
+    border-radius: 55px;
+    border-style: solid;
+    padding: 35px;
+}
+
 .legend {
     width: 70%;
     margin-top: 10%;
@@ -62,16 +75,24 @@ canvas {
 
     /*background-color: cadetblue;*/
 }
-.legendTitle{
+
+.legendTitle {
     margin-top: -10px;
     color: #333333;
     text-shadow: 0px 0px 2px #88888833;
 }
-.legendContent{
-    overflow-y:scroll;
+
+.legendContent {
+    font-size: 15px;
+    font-family: 'verdana', sans-serif;
+    overflow-y: scroll;
     height: 70vh;
 
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
 }
+
 .game-container {
     flex: 1;
     display: flex;
@@ -113,12 +134,12 @@ canvas {
 }
 
 .score {
-    width: 300px;
     display: flex;
     justify-content: center;
 }
 
 .rightColumn {
+    margin-left: 50px;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -130,12 +151,8 @@ canvas {
 }
 
 .separator {
-    margin-left: -35px;
-    margin-right: -35px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-
-    height: 2px;
+    margin: 10px -35px;
+    min-height: 2px;
     background-color: #00b6ffcc;
     box-shadow: 1px 0px 3px #8bc34a88;
 }
@@ -157,7 +174,86 @@ td {
     padding-bottom: 10px;
     min-width: 50px;
 }
-.legendKeyDesc{
+
+.legendKeyDesc {
     font-size: 15px;
-    font-family: 'Verdana', sans-serif;
+    font-family: 'verdana', sans-serif;
+}
+
+
+.tutorialLegendContent {
+    display: flex;
+    justify-content: center;
+    text-align: start;
+
+    flex-direction: column;
+}
+
+.firstColumn {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    margin-bottom: 10vh;
+}
+
+
+.levelsContainer {
+    margin-top: 20px;
+
+    border-color: #00b7ef88;
+    /*box-shadow: 0px 0px 8px #888888;*/
+    border-width: 5px;
+    border-radius: 55px;
+    border-style: solid;
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+.levelsSeparator {
+    width: 100%;
+
+    height: 3px;
+    background-color: #8bc34acc;
+    box-shadow: 1px 0px 3px #00b6ffcc;
+}
+
+.levelsLine {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.levelContainer {
+    box-shadow: -2px 2px 10px #888888;
+    border-radius: 10px;
+    margin: 15px 30px;
+    position: relative;
+    transition: box-shadow 0.2s ease;
+}
+
+.levelContainer:hover {
+    box-shadow: 0px 0px 20px #8bc34a;
+    transition: box-shadow 0.2s ease;
+    transform: scale(1.05);
+    /*cursor: pointer;*/
+}
+
+.levelsImage {
+    border-radius: 10px;
+}
+
+.levelText {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #55555544;
+    border-radius: 0 0 10px 10px;
+    font-size: 20px;
+    font-family: 'verdana', sans-serif;
+    color: #ffffff;
+    text-shadow: #222222 1px 1px 2px;
 }

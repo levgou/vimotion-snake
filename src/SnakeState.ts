@@ -5,6 +5,7 @@ import {
   Direction,
   FOOD_SOUND,
   Motion,
+  Point,
   randomSentence,
   SNAKE_LENGTH,
   STRAWBERRY,
@@ -14,6 +15,11 @@ import { checkCollision, manhattanDistance, randomInArray } from './misc'
 
 export class SnakeState {
   readonly rowCount: number
+  readonly dumbScore: boolean
+  readonly foodSpawnLimit?:
+    | ((board: Board, point: Point, sentences: string[]) => boolean)
+    | undefined
+
   sentences: string[] = []
   fruit = APPLE
 
@@ -29,8 +35,16 @@ export class SnakeState {
 
   score = 0
 
-  constructor(rowCount: number) {
+  constructor(
+    rowCount: number,
+    dumbScore: boolean,
+    foodSpawnLimit:
+      | ((board: Board, point: Point, sentences: string[]) => boolean)
+      | undefined
+  ) {
     this.rowCount = rowCount
+    this.dumbScore = dumbScore
+    this.foodSpawnLimit = foodSpawnLimit
     this.changeSentences()
   }
 
@@ -90,6 +104,12 @@ export class SnakeState {
       if (checkCollision(this.food.col, this.food.row, col, row)) {
         this.createFood()
       }
+      if (
+        this.foodSpawnLimit &&
+        !this.foodSpawnLimit(this.board, this.food, this.sentences)
+      ) {
+        this.createFood()
+      }
     }
 
     this.foodDistance = manhattanDistance(
@@ -109,16 +129,24 @@ export class SnakeState {
     }
   }
 
+  increaseScore = () => {
+    if (this.dumbScore) {
+      this.score += 1
+    } else {
+      this.score += Math.max(1, this.foodDistance - this.movesDoneForFood)
+    }
+  }
+
   moveSnake = (motion: Motion) => {
     this.doMoveSnake(motion)
     this.movesDoneForFood += 1
     if (
       checkCollision(this.head.col, this.head.row, this.food.col, this.food.row)
     ) {
-      this.score += Math.max(1, this.foodDistance - this.movesDoneForFood)
+      this.increaseScore()
       this.appendLastTail()
-      this.createFood()
       this.changeSentences()
+      this.createFood()
       FOOD_SOUND.play()
     }
   }
@@ -142,7 +170,6 @@ export class SnakeState {
     } else if (direction === Direction.Down) {
       y += 1
     }
-
     let tail = this.snake.pop()
 
     if (!tail) {

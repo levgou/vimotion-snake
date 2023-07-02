@@ -1,15 +1,16 @@
 import type { Component } from 'solid-js'
 import styles from './App.module.css'
+import { KeyboardKey } from './KeyboardKey'
 
 const Separator = () => {
-  return <div class={styles.separator}></div>
+  return <div class={styles.separator} />
 }
 
 const Key = (props: { key: string; description: string }) => {
   return (
     <tr>
       <td>
-        <div class={styles.kbd}>{props.key}</div>
+        <KeyboardKey key={props.key} />
       </td>
       <td class={styles.legendKeyDesc}>{props.description}</td>
     </tr>

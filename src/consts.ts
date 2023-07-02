@@ -48,6 +48,12 @@ export interface Board {
   height: number
 }
 
+export enum TutorialLevel {
+  First = 'first',
+  Second = 'second',
+  Third = 'third',
+}
+
 export const SENTENCE = 'Fyodor is do,med to hell.'
 import sentences from './assets/25_sentences.json'
 
@@ -129,7 +135,23 @@ import foodSound from './assets/food_sound.wav'
 export const FOOD_SOUND = new Audio(foodSound)
 
 import gh from './assets/github.png'
+
 export const GITHUB = gh
 
 import logo from './assets/logo.png'
+
 export const LOGO = logo
+
+import arcade from './assets/arcade_level.png'
+import tutorial_01 from './assets/levels_tutorial_01.png'
+import tutorial_02 from './assets/levels_tutorial_02.png'
+import tutorial_03 from './assets/levels_tutorial_03.png'
+import tutorial_04 from './assets/levels_tutorial_04.png'
+import tutorial_05 from './assets/levels_tutorial_05.png'
+
+export const ARCADE = arcade
+export const TUTORIAL_01 = tutorial_01
+export const TUTORIAL_02 = tutorial_02
+export const TUTORIAL_03 = tutorial_03
+export const TUTORIAL_04 = tutorial_04
+export const TUTORIAL_05 = tutorial_05

@@ -23,13 +23,23 @@ import { SnakeState } from './SnakeState'
 
 export class SnakeCanvas {
   readonly onInputChanged: (c: string) => void
+  readonly hideNumbers: boolean
+  readonly hideSentences: boolean
+
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
   state: SnakeState
 
-  constructor(state: SnakeState, onInputChanged: (c: string) => void) {
+  constructor(
+    state: SnakeState,
+    onInputChanged: (c: string) => void,
+    hideNumbers: boolean,
+    hideSentences: boolean
+  ) {
     this.onInputChanged = onInputChanged
     this.state = state
+    this.hideNumbers = hideNumbers
+    this.hideSentences = hideSentences
 
     const canvas = document.getElementById('canvas') as HTMLCanvasElement
     if (!canvas) {
@@ -71,6 +81,9 @@ export class SnakeCanvas {
   }
 
   drawArrows = () => {
+    if (this.hideNumbers) {
+      return
+    }
     const snakeHead = this.state.head
     const food = this.state.food
     const snakeFillStyle = 'rgba(98,134,217,0.5)'
@@ -179,44 +192,6 @@ export class SnakeCanvas {
   }
 
   game = () => {
-    const head = this.state.head
-    const food = this.state.food
-    // checking for wall collisions
-    // if (head.x < 0 || head.x > canvas.width - CELL_SIZE || head.y < 0 || head.y > canvas.height - CELL_SIZE) {
-    //     hit.play();
-    //     setBackground();
-    //     createSnake();
-    //     drawSnake();
-    //     createFood();
-    //     drawFood();
-    //     directionQueue = 'right';
-    //     score = 0;
-    // }
-
-    // checking for colisions with SNAKE's body
-    // for (i = 1; i < SNAKE.length; i++) {
-    //     if (head.x == SNAKE[i].x && head.y == SNAKE[i].y) {
-    //         hit.play(); // playing sounds
-    //         setBackground();
-    //         createSnake();
-    //         drawSnake();
-    //         createFood();
-    //         drawFood();
-    //         directionQueue = 'right';
-    //         score = 0;
-    //     }
-    // }
-
-    // checking for collision with FOOD
-    // if (checkCollision(head.col, head.row, food.col, food.row)) {
-    //   this.state.appendLastTail()
-    //   this.state.createFood()
-    //   this.drawFood()
-    //   this.state.changeSentences()
-    //   FOOD_SOUND.play()
-    //   // score += 10;
-    // }
-
     this.ctx.beginPath()
     this.setBackground('#fff', '#eee')
     this.drawSnake()
@@ -228,6 +203,9 @@ export class SnakeCanvas {
   }
 
   drawWords = () => {
+    if (this.hideSentences) {
+      return
+    }
     const ctx = this.ctx
     const head = this.state.head
     const sentence = this.state.sentences[head.row]
@@ -245,6 +223,10 @@ export class SnakeCanvas {
   }
 
   drawNumbers = () => {
+    if (this.hideNumbers) {
+      return
+    }
+
     const ctx = this.ctx
     const head = this.state.head
 
