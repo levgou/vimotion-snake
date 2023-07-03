@@ -5,7 +5,8 @@ import { Tutorial } from './Tutorial'
 import { Route, Router, Routes } from '@solidjs/router'
 import { FreeGame } from './FreeGame'
 import { TutorialLevel } from './consts'
-import { Levels } from './Levels' // 👈 Import the router
+import { Levels } from './Levels'
+
 // todo: keys to add support for
 // - backspace -
 // - u - undo

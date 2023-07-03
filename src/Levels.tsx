@@ -1,6 +1,16 @@
 import styles from './App.module.css'
-import { ARCADE, LOGO, TUTORIAL_01, TUTORIAL_02, TUTORIAL_03 } from './consts'
+import {
+  ARCADE,
+  CLIENT_ID,
+  LOGO,
+  TUTORIAL_01,
+  TUTORIAL_02,
+  TUTORIAL_03,
+} from './consts'
 import { A } from '@solidjs/router'
+import { cookies } from './cookies'
+import { createEffect, createSignal, onMount } from 'solid-js'
+import { LoginOrLogout } from './auth/LoginOrLogout'
 
 const Separator = () => {
   return <div class={styles.levelsSeparator}></div>
@@ -22,8 +32,10 @@ const Level = (props: { text: string; image: string }) => {
 }
 
 export const Levels = () => {
+  const { setImageUri, setEmail, setName } = cookies
+
   return (
-    <div>
+    <div class={styles.mainContainer}>
       <img src={LOGO} alt={'logo'} width={250} />
       <div class={styles.levelsContainer}>
         <div class={styles.levelsLine}>
@@ -46,6 +58,16 @@ export const Levels = () => {
           </A>
         </div>
       </div>
+      <LoginOrLogout
+        onSuccess={(res) => {
+          console.log(res)
+          setImageUri(res.profileObj.imageUrl)
+          setEmail(res.profileObj.email)
+          setName(res.profileObj.givenName)
+        }}
+        onFailure={(err) => console.warn(err)}
+        clientId={CLIENT_ID}
+      />
     </div>
   )
 }

@@ -18,6 +18,9 @@ export const OFS = (n: number) => n + CANVAS_PLAY_OFFSET
 export const COORD_OF = (n: number) => n / CELL_SIZE
 export const COORD = (i: number) => i * CELL_SIZE
 
+export const CLIENT_ID =
+  '589159628504-70ah5nthsuoh2qj07jjclp3vklh1m6pd.apps.googleusercontent.com'
+
 export enum Direction {
   Up = 'up',
   Down = 'down',
@@ -155,3 +158,7 @@ export const TUTORIAL_02 = tutorial_02
 export const TUTORIAL_03 = tutorial_03
 export const TUTORIAL_04 = tutorial_04
 export const TUTORIAL_05 = tutorial_05
+
+import googleIcon from './assets/Google__G__Logo.svg'
+
+export const GOOGLE_ICON = googleIcon

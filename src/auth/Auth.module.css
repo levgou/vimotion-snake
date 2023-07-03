@@ -1,0 +1,96 @@
+.initialStyle {
+    margin-top: 5vh;
+    background-color: #fff;
+    display: inline-flex;
+    align-items: center;
+    color: rgba(0, 0, 0, .54);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .24), 0 0 1px 0 rgba(0, 0, 0, .24);
+    padding: 0;
+    border-radius: 2px;
+    border: 1px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: Roboto, sans-serif;
+}
+
+.hoveredStyle {
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.activeStyle {
+    cursor: pointer;
+    background-color: #eee;
+    color: rgba(0, 0, 0, .54);
+    opacity: 1;
+}
+
+
+.authSpanStyle {
+    font-weight: 500;
+    padding: 10px;
+}
+
+.googleIcon {
+    margin-left: 10px;
+    border-radius: 2px;
+}
+
+.profileContainer {
+    display: flex;
+    align-items: center;
+    border-width: 1px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .24), 0 0 1px 0 rgba(0, 0, 0, .24);
+    border-radius: 20px;
+    margin-top: 4vh;
+    border-color: #00b6ee;
+    border-style: solid;
+}
+
+.profilePicture {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .24), 0 0 1px 0 rgba(0, 0, 0, .24);
+    border-radius: 20px;
+    border-color: #22222222;
+    border-width: 1px;
+    border-style: solid;
+}
+
+
+.textContainer {
+    margin-left: -30px;
+    z-index: -1;
+    background-color: #deffb4;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: Roboto, sans-serif;
+    color: #555555;
+    border-radius: 20px;
+    padding-right: 15px;
+    padding-left: 45px;
+}
+
+.logoutContainer {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 31px;
+    border-radius: 20px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.logoutContainer:hover {
+    box-shadow: inset 0px 0px 10px #ee0038;
+    transition: box-shadow 0.2s ease;
+    transform: scale(1.15);
+}
+
+.logoutContainer:active {
+    transform: scale(1.05);
+}
