@@ -53,6 +53,33 @@ const levelsConfig: { [key in TutorialLevel]: LevelConfig } = {
       )
     },
   },
+  [TutorialLevel.Fourth]: {
+    hideNumbers: true,
+    dumbScore: true,
+    neededScore: 40,
+    foodSpawnLimit: (board, point, sentences) => {
+      if (
+        point.col === 0 ||
+        point.col === board.width - 1 ||
+        point.row === 0 ||
+        point.row === board.height - 1
+      ) {
+        return false
+      }
+
+      return (
+        sentences[point.row][point.col] !== ' ' &&
+        sentences[point.row][point.col] !== ' '
+      )
+    },
+  },
+  [TutorialLevel.Fifth]: {
+    hideNumbers: true,
+    dumbScore: true,
+    neededScore: 50,
+    foodSpawnLimit: (board, point, sentences) =>
+      sentences[point.row][point.col] === ' ',
+  },
 }
 
 export const Tutorial = (props: { level: TutorialLevel }) => {

@@ -133,8 +133,81 @@ const ThirdLevelLegend = () => {
   )
 }
 
+const FourthLevelLegend = () => {
+  return (
+    <div class={styles.tutorialLegendContent}>
+      <li>
+        One of the fastest ways to move horizontally is to move to an exact
+        character in the line
+      </li>
+      <br />
+      <li>
+        To achieve this we can [f]ind forward of [F]ind backwards a character
+      </li>
+      <br />
+      <li>
+        At times, a character will show up multiple times in a line, so we can
+        repeat the search with [;] forward or [,] backwards
+      </li>
+      <br />
+      <li>Perform char find motions with the following keys:</li>
+      <br />
+      <table>
+        <Key key={'f'} description={'[f]ind a character forward'} />
+        <Key key={'F'} description={'[F]ind a character backwards'} />
+        <Key
+          key={';'}
+          description={'repeat last [f/F]ind in the same direction'}
+        />
+        <Key
+          key={','}
+          description={'repeat last [f/F]ind in the opposite direction'}
+        />
+      </table>
+    </div>
+  )
+}
+
+const FifthLevelLegend = () => {
+  return (
+    <div class={styles.tutorialLegendContent}>
+      <li>
+        At times we'd like to move to a char that is one position before another
+      </li>
+      <br />
+      <li>
+        This can be helpful when the next character is more unique than the one
+        we want to get to, or when we would like to get behind a common unique
+        character (for ex. '.')
+      </li>
+      <br />
+      <li>
+        To do this we can use [t]ill forward or [T]ill backwards. [;] and [,]
+        will work the same way as before, and will repeat the last movement
+      </li>
+      <br />
+      <li>Perform char 'till' motions with the following keys:</li>
+      <br />
+      <table>
+        <Key key={'t'} description={'[t]ill a character forward'} />
+        <Key key={'T'} description={'[T]ill a character backwards'} />
+        <Key
+          key={';'}
+          description={'repeat last [f/F]ind in the same direction'}
+        />
+        <Key
+          key={','}
+          description={'repeat last [f/F]ind in the opposite direction'}
+        />
+      </table>
+    </div>
+  )
+}
+
 const LevelComponent = {
   [TutorialLevel.First]: FirstLevelLegend,
   [TutorialLevel.Second]: SecondLevelLegend,
   [TutorialLevel.Third]: ThirdLevelLegend,
+  [TutorialLevel.Fourth]: FourthLevelLegend,
+  [TutorialLevel.Fifth]: FifthLevelLegend,
 }

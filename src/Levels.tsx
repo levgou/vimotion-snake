@@ -6,6 +6,8 @@ import {
   TUTORIAL_01,
   TUTORIAL_02,
   TUTORIAL_03,
+  TUTORIAL_04,
+  TUTORIAL_05,
 } from './consts'
 import { A } from '@solidjs/router'
 import { cookies } from './cookies'
@@ -51,10 +53,16 @@ export const Levels = () => {
           <A href={'/tutorial_02'}>
             <Level text={'Screen Motion'} image={TUTORIAL_02} />
           </A>
-        </div>
-        <div class={styles.levelsLine}>
           <A href={'/tutorial_03'}>
             <Level text={'Word Motion'} image={TUTORIAL_03} />
+          </A>
+        </div>
+        <div class={styles.levelsLine}>
+          <A href={'/tutorial_04'}>
+            <Level text={'Char Find 1'} image={TUTORIAL_04} />
+          </A>
+          <A href={'/tutorial_05'}>
+            <Level text={'Char Find 2'} image={TUTORIAL_05} />
           </A>
         </div>
       </div>

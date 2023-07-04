@@ -52,16 +52,25 @@ const fFtTMotion = (
   board: Board,
   head: Point,
   lineSentence: string,
-  cmd: string
+  cmd: string,
+  repeat: boolean = false
 ): Motion | null => {
   const char = cmd.at(-1) || ''
   const ft = cmd.at(0) || ''
 
   let tail = ''
   if (['f', 't'].includes(ft)) {
-    tail = lineSentence.slice(head.col + 1)
+    if (repeat && ft === 't') {
+      tail = lineSentence.slice(head.col + 2)
+    } else {
+      tail = lineSentence.slice(head.col + 1)
+    }
   } else {
-    tail = lineSentence.slice(0, head.col)
+    if (repeat && ft === 'T') {
+      tail = lineSentence.slice(0, head.col - 1)
+    } else {
+      tail = lineSentence.slice(0, head.col)
+    }
   }
   if (!tail.includes(char)) {
     return {
@@ -73,7 +82,10 @@ const fFtTMotion = (
   }
 
   if (['f', 't'].includes(ft)) {
-    const count = tail.indexOf(char) + 1
+    let count = tail.indexOf(char) + 1
+    if (repeat && ft === 't') {
+      count += 1
+    }
     return {
       cmd,
       direction: Direction.Right,
@@ -81,7 +93,10 @@ const fFtTMotion = (
       type: MotionType.LineSearch,
     }
   } else {
-    const count = tail.length - tail.lastIndexOf(char)
+    let count = tail.length - tail.lastIndexOf(char)
+    if (repeat && ft === 'T') {
+      count += 1
+    }
     return {
       cmd,
       direction: Direction.Left,
@@ -170,7 +185,7 @@ function repeatLineSearchMotion(
   }
   let motion: Motion | null = null
   if (cmd === ';') {
-    motion = fFtTMotion(board, head, lineSentence, lastMotion.cmd)
+    motion = fFtTMotion(board, head, lineSentence, lastMotion.cmd, true)
   } else {
     const lastMotionCmd = lastMotion.cmd[0]
     const lastMotionTarget = lastMotion.cmd[1]

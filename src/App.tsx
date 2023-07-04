@@ -31,6 +31,14 @@ const App: Component = () => {
             path="/tutorial_03"
             element={<Tutorial level={TutorialLevel.Third} />}
           />
+          <Route
+            path="/tutorial_04"
+            element={<Tutorial level={TutorialLevel.Fourth} />}
+          />
+          <Route
+            path="/tutorial_05"
+            element={<Tutorial level={TutorialLevel.Fifth} />}
+          />
         </Routes>
       </div>
     </Router>

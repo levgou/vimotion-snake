@@ -55,6 +55,8 @@ export enum TutorialLevel {
   First = 'first',
   Second = 'second',
   Third = 'third',
+  Fourth = 'fourth',
+  Fifth = 'fifth',
 }
 
 export const SENTENCE = 'Fyodor is do,med to hell.'
