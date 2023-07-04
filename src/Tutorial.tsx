@@ -1,4 +1,4 @@
-import { Component } from 'solid-js'
+import { Component, Show } from 'solid-js'
 import { useGame } from './useGame'
 import styles from './App.module.css'
 import { GithubLink } from './GithubLink'
@@ -6,6 +6,7 @@ import { TutorialLegend } from './TutorialLegend'
 import { Score } from './Score'
 import { Board, LOGO, Point, TutorialLevel } from './consts'
 import { Properties } from 'solid-js/web'
+import { Navigate } from '@solidjs/router'
 
 interface LevelConfig {
   hideSentences?: boolean
@@ -84,10 +85,13 @@ const levelsConfig: { [key in TutorialLevel]: LevelConfig } = {
 
 export const Tutorial = (props: { level: TutorialLevel }) => {
   const { level } = props
-  const { userInput, score } = useGame(levelsConfig[level])
+  const { userInput, score, gameOver } = useGame(levelsConfig[level])
 
   return (
-    <>
+    <Show
+      when={!gameOver()}
+      fallback={<Navigate href="/" state={gameOver()} />}
+    >
       <div class={styles.firstColumn}>
         <img src={LOGO} alt={'logo'} width={250} class={styles.logo} />
         <Score score={score()} />
@@ -103,6 +107,6 @@ export const Tutorial = (props: { level: TutorialLevel }) => {
         />
         <GithubLink />
       </div>
-    </>
+    </Show>
   )
 }

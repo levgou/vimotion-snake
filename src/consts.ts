@@ -1,9 +1,9 @@
 export const IGNORE_INPUTS = ['Shift', 'Meta', 'Arrow']
 export const HJKL = ['h', 'j', 'k', 'l']
 export const LINE_CMDS = ['$', '^']
-export const SCREEN_CMDS = ['gg', 'G']
+export const SCREEN_CMDS = ['gg', 'G', 'H', 'L', 'M']
 export const LINE_SEARCH = ['f', 'F', 't', 'T']
-export const WORD_MOTIONS = ['w', 'W', 'e', 'E', 'b', 'B']
+export const WORD_MOTIONS = ['w', 'W', 'e', 'E', 'b', 'B', 'ge']
 
 export const SNAKE_LENGTH = 5
 export const CANVAS_SIZE = 600
@@ -136,8 +136,10 @@ export const WATERMELON = new Image()
 WATERMELON.src = watermelon
 
 import foodSound from './assets/food_sound.wav'
+import veryGoodVeryNice from './assets/very_good_very_nice.wav'
 
 export const FOOD_SOUND = new Audio(foodSound)
+export const VERY_GOOD_VERY_NICE = new Audio(veryGoodVeryNice)
 
 import gh from './assets/github.png'
 

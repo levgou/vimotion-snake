@@ -111,19 +111,29 @@ const screenMotion = (
   board: Board,
   head: Point
 ): Motion | null => {
-  const moveToTop = cmd === 'gg'
-  if (moveToTop) {
+  if (cmd === 'gg' || cmd === 'H') {
     return {
       cmd,
       direction: Direction.Up,
       count: head.row,
       type: MotionType.Other,
     }
-  } else {
+  } else if (cmd === 'L' || cmd === 'G') {
     return {
       cmd,
       direction: Direction.Down,
       count: board.height - head.row - 1,
+      type: MotionType.Other,
+    }
+  } else {
+    const lineDiff = Math.floor(board.height / 2) - head.row
+    const direction = lineDiff > 0 ? Direction.Down : Direction.Up
+    const count = Math.abs(lineDiff)
+    console.log(lineDiff, direction, count)
+    return {
+      cmd,
+      direction,
+      count,
       type: MotionType.Other,
     }
   }

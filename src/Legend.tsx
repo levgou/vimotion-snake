@@ -59,6 +59,11 @@ export const Legend: Component = () => {
           <table>
             <Key key={'$'} description={'End Of Line'} />
             <Key key={'^'} description={'Start Of Line'} />
+            <Key key={'gg'} description={'Move to the first line'} />
+            <Key key={'H'} description={'Move to the first line'} />
+            <Key key={'G'} description={'Move to the the last line'} />
+            <Key key={'L'} description={'Move to the the last line'} />
+            <Key key={'M'} description={'Move to middle line'} />
           </table>
           <Separator />
           <table>

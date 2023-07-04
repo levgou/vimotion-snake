@@ -95,7 +95,10 @@ const SecondLevelLegend = () => {
       <Key key={'$'} description={'Move to end of line'} />
       <Key key={'^'} description={'Move to start of line'} />
       <Key key={'gg'} description={'Move to the first line'} />
+      <Key key={'H'} description={'Move to the first line'} />
       <Key key={'G'} description={'Move to the the last line'} />
+      <Key key={'L'} description={'Move to the the last line'} />
+      <Key key={'M'} description={'Move to middle line'} />
     </div>
   )
 }

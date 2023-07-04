@@ -2,20 +2,25 @@ import {
   APPLE,
   Board,
   CHERRY,
+  COORD,
   Direction,
   FOOD_SOUND,
   Motion,
+  OFS,
   Point,
   randomSentence,
   SNAKE_LENGTH,
   STRAWBERRY,
+  VERY_GOOD_VERY_NICE,
   WATERMELON,
 } from './consts'
 import { checkCollision, manhattanDistance, randomInArray } from './misc'
+import { eatConfig, explode, winConfig } from './explode'
 
 export class SnakeState {
   readonly rowCount: number
   readonly dumbScore: boolean
+  readonly neededScore: number
   readonly foodSpawnLimit?:
     | ((board: Board, point: Point, sentences: string[]) => boolean)
     | undefined
@@ -40,11 +45,13 @@ export class SnakeState {
     dumbScore: boolean,
     foodSpawnLimit:
       | ((board: Board, point: Point, sentences: string[]) => boolean)
-      | undefined
+      | undefined,
+    neededScore: number
   ) {
     this.rowCount = rowCount
     this.dumbScore = dumbScore
     this.foodSpawnLimit = foodSpawnLimit
+    this.neededScore = neededScore
     this.changeSentences()
   }
 
@@ -137,7 +144,7 @@ export class SnakeState {
     }
   }
 
-  moveSnake = (motion: Motion) => {
+  moveSnake = (motion: Motion): [boolean, Promise<any> | undefined] => {
     this.doMoveSnake(motion)
     this.movesDoneForFood += 1
     if (
@@ -146,9 +153,21 @@ export class SnakeState {
       this.increaseScore()
       this.appendLastTail()
       this.changeSentences()
-      this.createFood()
-      FOOD_SOUND.play()
+
+      if (this.score === this.neededScore) {
+        explode(OFS(COORD(this.food.col)), OFS(COORD(this.food.row)), winConfig)
+        const p = new Promise((resolve) => {
+          VERY_GOOD_VERY_NICE.onended = resolve
+        })
+        VERY_GOOD_VERY_NICE.play()
+        return [true, p]
+      } else {
+        explode(OFS(COORD(this.food.col)), OFS(COORD(this.food.row)), eatConfig)
+        this.createFood()
+        FOOD_SOUND.play()
+      }
     }
+    return [false, undefined]
   }
 
   doMoveSnake = (motion: Motion) => {

@@ -3,21 +3,31 @@ import { SnakeState } from './SnakeState'
 import { Board, IGNORE_INPUTS, Motion, Point, ROW_COUNT } from './consts'
 import { SnakeCanvas } from './snake'
 import { generateMotion } from './motion'
+import { explode } from './explode'
 
 export const useGame = ({
   hideNumbers,
   hideSentences,
   dumbScore,
   foodSpawnLimit,
+  neededScore,
 }: {
   hideSentences?: boolean
   hideNumbers?: boolean
   dumbScore?: boolean
   foodSpawnLimit?: (board: Board, point: Point, sentences: string[]) => boolean
+  neededScore?: number
 } = {}) => {
   const [userInput, setUserInput] = createSignal('')
   const [score, setScore] = createSignal(0)
-  const state = new SnakeState(ROW_COUNT, !!dumbScore, foodSpawnLimit)
+  const [gameOver, setGameOver] = createSignal(false)
+
+  const state = new SnakeState(
+    ROW_COUNT,
+    !!dumbScore,
+    foodSpawnLimit,
+    neededScore ?? -1
+  )
 
   let lastMotion: Motion | null = null
   let canvas: SnakeCanvas
@@ -50,10 +60,14 @@ export const useGame = ({
       lastMotion = motion
     }
     if (motion) {
-      state.moveSnake(motion)
+      const [gameOver, p] = state.moveSnake(motion)
+      if (gameOver) {
+        p?.then(() => setGameOver(true))
+      }
+
       setScore(state.score)
     }
   }
 
-  return { userInput, score }
+  return { userInput, score, gameOver }
 }
